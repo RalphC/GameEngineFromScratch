@@ -13,5 +13,28 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="头文件\Framework">
+      <UniqueIdentifier>{4e1db51b-6d18-417e-8628-9f732e24baaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Framework\Interface">
+      <UniqueIdentifier>{0a03604d-0b07-4a63-a9f6-40574d8d38bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Framework\Common">
+      <UniqueIdentifier>{a0afc620-41b2-43db-9da0-471ba8d6410f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Framework\Interface\Interface.hpp">
+      <Filter>头文件\Framework\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Interface\IApplication.hpp">
+      <Filter>头文件\Framework\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Interface\IRuntimeModule.hpp">
+      <Filter>头文件\Framework\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Common\BaseApplication.hpp">
+      <Filter>头文件\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
