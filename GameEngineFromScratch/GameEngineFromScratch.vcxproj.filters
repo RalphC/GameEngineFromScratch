@@ -22,6 +22,21 @@
     <Filter Include="头文件\Framework\Common">
       <UniqueIdentifier>{a0afc620-41b2-43db-9da0-471ba8d6410f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="源文件\Framework">
+      <UniqueIdentifier>{bb4a81f6-7ce2-4850-8e2d-ff8174d4c533}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Framework\Common">
+      <UniqueIdentifier>{4f7a8c26-ce3e-4465-a472-258f97cfcea4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Empty">
+      <UniqueIdentifier>{a18f6531-48f3-4f49-911e-402716ac0b18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Platform">
+      <UniqueIdentifier>{edb7502b-ff14-47c5-bb8f-2884f6d2107c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Platform\Windows">
+      <UniqueIdentifier>{f8fa26f9-ca68-48ca-9cf9-d9b0f600599c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Interface\Interface.hpp">
@@ -36,5 +51,19 @@
     <ClInclude Include="Framework\Common\BaseApplication.hpp">
       <Filter>头文件\Framework\Common</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Framework\Common\BaseApplication.cpp">
+      <Filter>源文件\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Common\main.cpp">
+      <Filter>源文件\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Empty\EmptyApplication.cpp">
+      <Filter>源文件\Empty</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\helloengine_win.cpp">
+      <Filter>源文件\Platform\Windows</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

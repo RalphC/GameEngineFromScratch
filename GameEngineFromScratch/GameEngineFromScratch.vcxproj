@@ -72,6 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(ProjectDir)Framework\Interface;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -86,6 +87,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)Framework\Interface;$(ProjectDir)Framework\Common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -121,6 +123,12 @@
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
     <ClInclude Include="Framework\Interface\Interface.hpp" />
     <ClInclude Include="Framework\Interface\IRuntimeModule.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Empty\EmptyApplication.cpp" />
+    <ClCompile Include="Framework\Common\BaseApplication.cpp" />
+    <ClCompile Include="Framework\Common\main.cpp" />
+    <ClCompile Include="Platform\Windows\helloengine_win.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
