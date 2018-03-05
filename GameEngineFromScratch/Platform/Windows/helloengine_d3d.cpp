@@ -6,7 +6,6 @@
 #include <d3d11.h>
 #include <d3d11_1.h>
 #include <d3dcompiler.h>
-//#include <dxerr.h>
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <DirectXColors.h>
@@ -14,21 +13,23 @@
 using namespace DirectX;
 using namespace DirectX::PackedVector;
 
-const uint32_t SCREEN_WIDTH = 800;
-const uint32_t SCREEN_HEIGHT = 600;
+const uint32_t SCREEN_WIDTH = 960;
+const uint32_t SCREEN_HEIGHT = 480;
 
-IDXGISwapChain *g_pSwapchain = nullptr;
-ID3D11Device *g_pDev = nullptr;
-ID3D11DeviceContext *g_pDevcon = nullptr;
+//å…¨å±€ä½¿ç”¨
+IDXGISwapChain			*g_pSwapchain	= nullptr;
+ID3D11Device			*g_pDev			= nullptr;
+ID3D11DeviceContext		*g_pDevcon		= nullptr;
 
-ID3D11RenderTargetView *g_pRTView = nullptr;
+ID3D11RenderTargetView	*g_pRTView		= nullptr;
 
-ID3D11InputLayout *g_pLayout = nullptr;
-ID3D11VertexShader *g_pVS = nullptr;
-ID3D11PixelShader *g_pPS = nullptr;
+ID3D11InputLayout		*g_pLayout		= nullptr;
+ID3D11VertexShader		*g_pVS			= nullptr;
+ID3D11PixelShader		*g_pPS			= nullptr;
 
-ID3D11Buffer *g_pVBuffer = nullptr;
+ID3D11Buffer			*g_pVBuffer		= nullptr;
 
+//vertex buffer
 struct VERTEX {
 	XMFLOAT3 Position;
 	XMFLOAT4 Color;
@@ -74,7 +75,7 @@ void InitPipeline() {
 	ID3DBlob *VS, *PS;
 
 	D3DReadFileToBlob(L"copy.vso", &VS);
-	D3DReadFileToBlob(L"copy.vso", &PS);
+	D3DReadFileToBlob(L"copy.pso", &PS);
 
 	g_pDev->CreateVertexShader(VS->GetBufferPointer(), VS->GetBufferSize(), NULL, &g_pVS);
 	g_pDev->CreatePixelShader(PS->GetBufferPointer(), PS->GetBufferSize(), NULL, &g_pPS);
@@ -82,7 +83,7 @@ void InitPipeline() {
 	g_pDevcon->VSSetShader(g_pVS, 0, 0);
 	g_pDevcon->PSSetShader(g_pPS, 0, 0);
 
-	//ÔÚUE4Àï·ÅÔÚÁËFD3D11VertexElementsÀï
+	//åœ¨UE4é‡Œæ”¾åœ¨äº†FD3D11VertexElementsé‡Œ
 	D3D11_INPUT_ELEMENT_DESC ied[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -224,7 +225,7 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 	HWND hWnd;
 	WNDCLASSEX wc;
 
-	//³õÊ¼»¯COM
+	//åˆå§‹åŒ–COM
 	//if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE))) return -1;
 
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
@@ -264,7 +265,7 @@ int WINAPI wWinMain(HINSTANCE hInstance,
 		DispatchMessage(&msg);
 	}
 
-	//ÇåÀíCOM
+	//æ¸…ç†COM
 	//CoUninitialize();
 
 	return msg.wParam;
@@ -296,7 +297,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		wasHandled = true;
 	}break;
 
-	case WM_SIZE:	//´¦Àí´°¿Ú³ß´ç±ä»¯
+	case WM_SIZE:	//å¤„ç†çª—å£å°ºå¯¸å˜åŒ–
 	{
 		if (g_pSwapchain != nullptr)
 		{
@@ -313,7 +314,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		wasHandled = true;
 	}break;
 
-	case WM_DISPLAYCHANGE:	//ÏÔÊ¾·Ö±æÂÊ±ä»¯
+	case WM_DISPLAYCHANGE:	//æ˜¾ç¤ºåˆ†è¾¨ç‡å˜åŒ–
 	{
 		InvalidateRect(hWnd, nullptr, false);
 		wasHandled = true;
