@@ -37,6 +37,12 @@
     <Filter Include="源文件\Platform\Windows">
       <UniqueIdentifier>{f8fa26f9-ca68-48ca-9cf9-d9b0f600599c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Platform">
+      <UniqueIdentifier>{f3bc4ad1-981d-46a8-bb57-d6d364233a9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Platform\Windows">
+      <UniqueIdentifier>{10ded946-4356-4c45-9a98-ad3875f33087}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Interface\Interface.hpp">
@@ -49,6 +55,15 @@
       <Filter>头文件\Framework\Interface</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Common\BaseApplication.hpp">
+      <Filter>头文件\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows\cbuffer.h">
+      <Filter>头文件\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows\d3dx12.h">
+      <Filter>头文件\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Common\math.h">
       <Filter>头文件\Framework\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -69,6 +84,12 @@
       <Filter>源文件\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Platform\Windows\helloengine_d3d.cpp">
+      <Filter>源文件\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\helloengine_opengl.cpp">
+      <Filter>源文件\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Platform\Windows\helloengine_d3d12.cpp">
       <Filter>源文件\Platform\Windows</Filter>
     </ClCompile>
   </ItemGroup>

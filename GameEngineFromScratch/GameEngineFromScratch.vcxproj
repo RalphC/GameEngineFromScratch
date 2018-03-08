@@ -120,9 +120,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Common\BaseApplication.hpp" />
+    <ClInclude Include="Framework\Common\math.h" />
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
     <ClInclude Include="Framework\Interface\Interface.hpp" />
     <ClInclude Include="Framework\Interface\IRuntimeModule.hpp" />
+    <ClInclude Include="Platform\Windows\cbuffer.h" />
+    <ClInclude Include="Platform\Windows\d3dx12.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Empty\EmptyApplication.cpp" />
@@ -130,6 +133,8 @@
     <ClCompile Include="Framework\Common\main.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d2d.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d3d.cpp" />
+    <ClCompile Include="Platform\Windows\helloengine_d3d12.cpp" />
+    <ClCompile Include="Platform\Windows\helloengine_opengl.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_win.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
