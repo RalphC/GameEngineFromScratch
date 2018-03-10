@@ -120,7 +120,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Common\BaseApplication.hpp" />
-    <ClInclude Include="Framework\Common\math.h" />
+    <ClInclude Include="Framework\Common\enginemath.h" />
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
     <ClInclude Include="Framework\Interface\Interface.hpp" />
     <ClInclude Include="Framework\Interface\IRuntimeModule.hpp" />

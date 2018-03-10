@@ -19,5 +19,16 @@ typedef struct VectorType {
 
 void MatrixRotationYawPitchRoll(float* matrix, float yaw, float pitch, float roll)
 {
+	float cYaw, cPitch, cRoll, sYaw, sPitch, sRoll;
+
+	cYaw = cosf(yaw);
+	cPitch = cosf(pitch);
+	cRoll = cosf(roll);
+
+	sYaw = sinf(yaw);
+	sPitch = sinf(pitch);
+	sRoll = sinf(roll);
+
+	matrix[0] = (cRoll * cYaw) + (sRoll * sPitch * sYaw);
 
 }

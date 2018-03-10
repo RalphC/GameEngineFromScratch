@@ -63,7 +63,7 @@
     <ClInclude Include="Platform\Windows\d3dx12.h">
       <Filter>头文件\Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Common\math.h">
+    <ClInclude Include="Framework\Common\enginemath.h">
       <Filter>头文件\Framework\Common</Filter>
     </ClInclude>
   </ItemGroup>
