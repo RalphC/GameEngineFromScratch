@@ -3,7 +3,7 @@
 #include <tchar.h>
 #include <fstream>
 
-#include "math.h"
+#include "enginemath.h"
 
 #include <gl\GL.h>
 

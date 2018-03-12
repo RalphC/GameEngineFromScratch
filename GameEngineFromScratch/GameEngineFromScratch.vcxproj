@@ -126,6 +126,7 @@
     <ClInclude Include="Framework\Interface\IRuntimeModule.hpp" />
     <ClInclude Include="Platform\Windows\cbuffer.h" />
     <ClInclude Include="Platform\Windows\d3dx12.h" />
+    <ClInclude Include="Platform\Windows\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Empty\EmptyApplication.cpp" />

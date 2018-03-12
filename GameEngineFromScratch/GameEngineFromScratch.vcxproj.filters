@@ -66,6 +66,9 @@
     <ClInclude Include="Framework\Common\enginemath.h">
       <Filter>头文件\Framework\Common</Filter>
     </ClInclude>
+    <ClInclude Include="Platform\Windows\Mesh.h">
+      <Filter>头文件\Platform\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\Common\BaseApplication.cpp">
