@@ -74,6 +74,19 @@ uint32_t g_nCbvSrvDescriptorSize;
 ComPtr<ID3D12Resource> g_pVertexBuffer;
 D3D12_VERTEX_BUFFER_VIEW	g_VertexBufferView;
 
+struct SimpleConstants
+{
+	XMFLOAT4X4  m_modelView;
+	XMFLOAT4X4  m_modelViewProjection;
+	XMFLOAT4    m_lightPosition;
+	XMFLOAT4    m_lightColor;
+	XMFLOAT4    m_ambientColor;
+	XMFLOAT4    m_lightAttenuation;
+};
+
+uint8_t*    g_pCbvDataBegin = nullptr;
+SimpleConstants g_ConstantBufferData;
+
 ComPtr<ID3D12DescriptorHeap>	g_pDsvHeap;
 ComPtr<ID3D12DescriptorHeap>	g_pCbvSrvHeap;
 ComPtr<ID3D12DescriptorHeap>	g_pSamplerHeap;
@@ -94,6 +107,16 @@ struct VERTEX {
 	XMFLOAT3 Position;
 	XMFLOAT4 Color;
 };
+
+// vertex properties
+typedef enum VertexElements
+{
+	kVertexPosition = 0,
+	kVertexNormal,
+	kVertexTangent,
+	kVertexUv,
+	kVertexElemCount
+} VertexElements;
 
 struct SimpleMeshVertex {
 	XMFLOAT3 m_position;
@@ -372,7 +395,7 @@ void InitPipeline() {
 	CD3DX12_DESCRIPTOR_RANGE1 ranges[3];
 	ranges[0].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
 	ranges[1].Init(D3D12_DESCRIPTOR_RANGE_TYPE_SAMPLER, 1, 0);
-	ranges[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, nFrameCount, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
+	ranges[2].Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 6, 0, 0, D3D12_DESCRIPTOR_RANGE_FLAG_DATA_STATIC);
 
 	CD3DX12_ROOT_PARAMETER1 rootParameters[3];
 	rootParameters[0].InitAsDescriptorTable(1, &ranges[0], D3D12_SHADER_VISIBILITY_PIXEL);
@@ -389,7 +412,7 @@ void InitPipeline() {
 	CD3DX12_VERSIONED_ROOT_SIGNATURE_DESC rootSignatureDesc;
 	rootSignatureDesc.Init_1_1(_countof(rootParameters), rootParameters, 0, nullptr, rootSignatureFlags);
 
-	ComPtr<ID3D10Blob> signature;
+	//ComPtr<ID3D10Blob> signature;
 
 	ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&rootSignatureDesc, featureData.HighestVersion, &signature, &error));
 	ThrowIfFailed(g_pDev->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&g_pRootSignature)));
@@ -441,7 +464,7 @@ void InitPipeline() {
 
 	D3D12_INPUT_ELEMENT_DESC ied[] = {
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		{"TANGENT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 24, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 40, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 	};
@@ -450,8 +473,8 @@ void InitPipeline() {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC psod = {};
 	psod.InputLayout = { ied, _countof(ied) };
 	psod.pRootSignature = g_pRootSignature.Get();
-	psod.VS = { reinterpret_cast<UINT*>(vertexShader->GetBufferPointer()), vertexShader->GetBufferSize() };
-	psod.PS = { reinterpret_cast<UINT*>(pixelShader->GetBufferPointer()), pixelShader->GetBufferSize() };
+	psod.VS = CD3DX12_SHADER_BYTECODE(reinterpret_cast<UINT8*>(vertexShader->GetBufferPointer()), vertexShader->GetBufferSize());
+	psod.PS = CD3DX12_SHADER_BYTECODE(reinterpret_cast<UINT8*>(pixelShader->GetBufferPointer()), pixelShader->GetBufferSize());
 	psod.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 	psod.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 	psod.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -493,10 +516,10 @@ void InitGrapghics() {
 
 	//vertex buffer
 	ThrowIfFailed(g_pDev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(torus.m_vertexBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&g_pVertexBuffer)));
 
@@ -528,10 +551,10 @@ void InitGrapghics() {
 
 	//index buffer
 	ThrowIfFailed(g_pDev->CreateCommittedResource(
-		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
 		D3D12_HEAP_FLAG_NONE,
 		&CD3DX12_RESOURCE_DESC::Buffer(torus.m_indexBufferSize),
-		D3D12_RESOURCE_STATE_GENERIC_READ,
+		D3D12_RESOURCE_STATE_COPY_DEST,
 		nullptr,
 		IID_PPV_ARGS(&g_pIndexBuffer)));
 
@@ -564,7 +587,116 @@ void InitGrapghics() {
 	uint8_t* pTextureData = GenerateTextureData();
 
 	//TODO
-	
+	//create texture/sample
+	D3D12_RESOURCE_DESC textureDesc = {};
+	textureDesc.MipLevels = 1;
+	textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	textureDesc.Width = nScreenWidth;
+	textureDesc.Height = nScreenHeight;
+	textureDesc.Flags = D3D12_RESOURCE_FLAG_NONE;
+	textureDesc.DepthOrArraySize = 1;
+	textureDesc.SampleDesc.Count = 1;
+	textureDesc.SampleDesc.Quality = 0;
+	textureDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	ThrowIfFailed(g_pDev->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&textureDesc,
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		nullptr,
+		IID_PPV_ARGS(&g_pTextureBuffer)));
+
+	const UINT subresourceCount = textureDesc.DepthOrArraySize * textureDesc.MipLevels;
+	const UINT64 uploadBufferSize = GetRequiredIntermediateSize(g_pTextureBuffer.Get(), 0, subresourceCount);
+
+	ThrowIfFailed(g_pDev->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(uploadBufferSize),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&pTextureUploadHeap)));
+
+	//copy
+	D3D12_SUBRESOURCE_DATA textureData = {};
+	textureData.pData = pTextureData;
+	textureData.RowPitch = nTextureWidth * nTexturePixelSize;
+	textureData.SlicePitch = textureData.RowPitch * nTextureHeight;
+
+	UpdateSubresources(g_pCommandList.Get(), g_pTextureBuffer.Get(), pTextureUploadHeap.Get(), 0, 0, subresourceCount, &textureData);
+	g_pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
+		g_pTextureBuffer.Get(),
+		D3D12_RESOURCE_STATE_COPY_DEST,
+		D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE));
+
+	//sampler
+	D3D12_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.AddressU = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.AddressV = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.AddressW = D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+	samplerDesc.MinLOD = 0;
+	samplerDesc.MaxLOD = D3D12_FLOAT32_MAX;
+	samplerDesc.MipLODBias = 0.0f;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_ALWAYS;
+	g_pDev->CreateSampler(&samplerDesc, g_pSamplerHeap->GetCPUDescriptorHandleForHeapStart());
+
+	//shader resource
+	D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+	srvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	CD3DX12_CPU_DESCRIPTOR_HANDLE srvHandle(g_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart());
+	g_pDev->CreateShaderResourceView(g_pTextureBuffer.Get(), &srvDesc, srvHandle);
+
+	//depth stencil
+	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
+	depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	depthStencilDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+	D3D12_CLEAR_VALUE depthOptimizedClearValue = {};
+	depthOptimizedClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	depthOptimizedClearValue.DepthStencil.Depth = 1.0f;
+	depthOptimizedClearValue.DepthStencil.Stencil = 0;
+
+	ThrowIfFailed(g_pDev->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Tex2D(DXGI_FORMAT_D32_FLOAT, nScreenWidth, nScreenHeight, 1, 0, 1, 0, D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL),
+		D3D12_RESOURCE_STATE_DEPTH_WRITE,
+		&depthOptimizedClearValue,
+		IID_PPV_ARGS(&g_pDepthStrncilBuffer)));
+
+	//constant buffer
+	size_t sizeConstantBuffer = (sizeof(SimpleConstants) + 255) & ~255;
+	ThrowIfFailed(g_pDev->CreateCommittedResource(
+		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+		D3D12_HEAP_FLAG_NONE,
+		&CD3DX12_RESOURCE_DESC::Buffer(sizeConstantBuffer),
+		D3D12_RESOURCE_STATE_GENERIC_READ,
+		nullptr,
+		IID_PPV_ARGS(&g_pConstantUploadBuffer)));
+
+	for (uint32_t i = 0; i < nFrameCount; i++) {
+		CD3DX12_CPU_DESCRIPTOR_HANDLE cbvHandle(g_pCbvSrvHeap->GetCPUDescriptorHandleForHeapStart(), i + 1, g_nCbvSrvDescriptorSize);
+		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
+		cbvDesc.BufferLocation = g_pConstantUploadBuffer->GetGPUVirtualAddress();
+		cbvDesc.SizeInBytes = sizeConstantBuffer;
+		g_pDev->CreateConstantBufferView(&cbvDesc, cbvHandle);
+	}
+
+	//map
+	CD3DX12_RANGE readRange(0, 0);
+	ThrowIfFailed(g_pConstantUploadBuffer->Map(0, &readRange, reinterpret_cast<void**>(&g_pCbvDataBegin)));
+
+	//command list
+	ThrowIfFailed(g_pCommandList->Close());
+	ID3D12CommandList* ppCommandList[] = { g_pCommandList.Get() };
+	g_pCommandQueue->ExecuteCommandLists(_countof(ppCommandList), ppCommandList);
+
 
 	//sync object
 	ThrowIfFailed(g_pDev->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&g_pFence)));
@@ -616,7 +748,15 @@ HRESULT CreateGraphicsResources(HWND hWnd)
 		ComPtr<IDXGIFactory4> factory;
 		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&factory)));
 
-		if (bUseWarpDevice) {
+		ComPtr<IDXGIAdapter1> hardwareAdapter;
+		GetHardwareAdapter(factory.Get(), &hardwareAdapter);
+
+		if (FAILED(D3D12CreateDevice(
+			hardwareAdapter.Get(),
+			D3D_FEATURE_LEVEL_11_0,
+			IID_PPV_ARGS(&g_pDev)))) {
+
+			fprintf(stderr, "hardware not support dxd12, fallback");
 			ComPtr<IDXGIAdapter> warpAdapter;
 			ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
 
@@ -625,15 +765,7 @@ HRESULT CreateGraphicsResources(HWND hWnd)
 				D3D_FEATURE_LEVEL_11_0,
 				IID_PPV_ARGS(&g_pDev)));
 		}
-		else {
-			ComPtr<IDXGIAdapter1> hardwareAdapter;
-			GetHardwareAdapter(factory.Get(), &hardwareAdapter);
 
-			ThrowIfFailed(D3D12CreateDevice(
-				hardwareAdapter.Get(),
-				D3D_FEATURE_LEVEL_11_0,
-				IID_PPV_ARGS(&g_pDev)));
-		}
 
 		D3D12_COMMAND_QUEUE_DESC queueDesc = {};
 		queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -669,9 +801,11 @@ HRESULT CreateGraphicsResources(HWND hWnd)
 
 		g_nFrameIndex = g_pSwapChain->GetCurrentBackBufferIndex();
 
+		CreateDescriptorHeaps();
 		CreateRenderTarget();
 		InitPipeline();
 		InitGrapghics();
+		InitConstant();
 	}
 
 	return hr;
@@ -689,8 +823,19 @@ void PopulateCommandList() {
 	ThrowIfFailed(g_pCommandList->Reset(g_pCommandAllocator.Get(), g_pPipelineState.Get()));
 
 	g_pCommandList->SetGraphicsRootSignature(g_pRootSignature.Get());
+
+	ID3D12DescriptorHeap* ppHeaps[] = { g_pCbvSrvHeap.Get(), g_pSamplerHeap.Get() };
+	g_pCommandList->SetDescriptorHeaps(_countof(ppHeaps), ppHeaps);
+
+	g_pCommandList->SetGraphicsRootDescriptorTable(0, g_pCbvSrvHeap->GetGPUDescriptorHandleForHeapStart());
+	g_pCommandList->SetGraphicsRootDescriptorTable(1, g_pSamplerHeap->GetGPUDescriptorHandleForHeapStart());
+
 	g_pCommandList->RSSetViewports(1, &g_ViewPort);
 	g_pCommandList->RSSetScissorRects(1, &g_ScissorRect);
+
+	g_pCommandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	g_pCommandList->IASetVertexBuffers(0, 1, &g_VertexBufferView);
+	g_pCommandList->IASetIndexBuffer(&g_IndexBufferView);
 
 	g_pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 		g_pRenderTargets[g_nFrameIndex].Get(),
@@ -698,17 +843,24 @@ void PopulateCommandList() {
 		D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(g_pRtvHeap->GetCPUDescriptorHandleForHeapStart(), g_nFrameIndex, g_nRtvDescriptorSize);
-	g_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, nullptr);
+	CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(g_pDsvHeap->GetCPUDescriptorHandleForHeapStart());
+	g_pCommandList->OMSetRenderTargets(1, &rtvHandle, FALSE, &dsvHandle);
+
+	uint32_t nFrameResourceDescriptorOffset = 1 + g_nFrameIndex;
+	CD3DX12_GPU_DESCRIPTOR_HANDLE cbvSrvHandle(g_pCbvSrvHeap->GetGPUDescriptorHandleForHeapStart(), nFrameResourceDescriptorOffset, g_nCbvSrvDescriptorSize);
+
+	g_pCommandList->SetGraphicsRootDescriptorTable(2, cbvSrvHandle);
 
 	const FLOAT clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
 
 	g_pCommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+	g_pCommandList->ClearDepthStencilView(g_pDsvHeap->GetCPUDescriptorHandleForHeapStart(), D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-
-	g_pCommandList->IASetVertexBuffers(0, 1, &g_VertexBufferView);
+	/*g_pCommandList->IASetVertexBuffers(0, 1, &g_VertexBufferView);
 	g_pCommandList->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	g_pCommandList->DrawInstanced(3, 1, 0, 0);
+	g_pCommandList->DrawInstanced(3, 1, 0, 0);*/
 
+	g_pCommandList->DrawIndexedInstanced(torus.m_indexCount, 1, 0, 0, 0);
 
 	g_pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(
 		g_pRenderTargets[g_nFrameIndex].Get(),
@@ -716,6 +868,29 @@ void PopulateCommandList() {
 		D3D12_RESOURCE_STATE_PRESENT));
 
 	ThrowIfFailed(g_pCommandList->Close());
+}
+
+void Update() {
+	const float rotationSpeed = XM_PI * 2.0 / 120;
+	static float rotationAngle = 0.0f;
+
+	rotationAngle += rotationSpeed;
+	if (rotationAngle >= XM_PI * 2.0) {
+		rotationAngle -= XM_PI * 2.0;
+	}
+
+	const XMMATRIX m = XMMatrixRotationRollPitchYaw(rotationAngle, rotationAngle, 0.0f);
+	XMStoreFloat4x4(&g_ConstantBufferData.m_modelView, XMMatrixTranspose(m * g_mWorldToViewMatrix));
+	XMStoreFloat4x4(&g_ConstantBufferData.m_modelViewProjection, XMMatrixTranspose(m * g_mViewProjectionMatrix));
+	XMVECTOR v = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	v = XMVector4Transform(v, g_mLightToWorldMatrix);
+	v = XMVector4Transform(v, g_mWorldToViewMatrix);
+	XMStoreFloat4(&g_ConstantBufferData.m_lightPosition, v);
+	g_ConstantBufferData.m_lightColor = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	g_ConstantBufferData.m_ambientColor = XMFLOAT4(0.0f, 0.0f, 0.7f, 1.0f);
+	g_ConstantBufferData.m_lightAttenuation = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.0f);
+
+	memcpy(g_pCbvDataBegin, &g_ConstantBufferData, sizeof(g_ConstantBufferData));
 }
 
 void RenderFrame() {
@@ -811,6 +986,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	case WM_PAINT:
 	{
 		CreateGraphicsResources(hWnd);
+		Update();
 		RenderFrame();
 		wasHandled = true;
 	}break;
