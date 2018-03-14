@@ -43,6 +43,9 @@
     <Filter Include="头文件\Platform\Windows">
       <UniqueIdentifier>{10ded946-4356-4c45-9a98-ad3875f33087}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Empty">
+      <UniqueIdentifier>{f3d21ddb-ce11-4726-876b-dfc9446c4a59}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Framework\Interface\Interface.hpp">
@@ -69,6 +72,9 @@
     <ClInclude Include="Platform\Windows\Mesh.h">
       <Filter>头文件\Platform\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="Framework\Common\Allocator.hpp">
+      <Filter>头文件\Framework\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Framework\Common\BaseApplication.cpp">
@@ -94,6 +100,9 @@
     </ClCompile>
     <ClCompile Include="Platform\Windows\helloengine_d3d12.cpp">
       <Filter>源文件\Platform\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Common\Allocator.cpp">
+      <Filter>源文件\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -119,6 +119,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Framework\Common\Allocator.hpp" />
     <ClInclude Include="Framework\Common\BaseApplication.hpp" />
     <ClInclude Include="Framework\Common\enginemath.h" />
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
@@ -130,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Empty\EmptyApplication.cpp" />
+    <ClCompile Include="Framework\Common\Allocator.cpp" />
     <ClCompile Include="Framework\Common\BaseApplication.cpp" />
     <ClCompile Include="Framework\Common\main.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d2d.cpp" />
