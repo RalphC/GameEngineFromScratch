@@ -27,6 +27,7 @@ namespace My
 		static const unsigned char PATTERN_ALLOC = 0xfd;
 		static const unsigned char PATTERN_FREE = 0xfe;
 
+		Allocator();
 		Allocator(
 			size_t dataSize,
 			size_t pageSize,

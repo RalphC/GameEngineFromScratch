@@ -9,6 +9,13 @@
 
 using namespace My;
 
+My::Allocator::Allocator()
+	: m_dataSize(0), m_pageSize(0),
+	m_blockSize(0), m_alignmentSize(0),
+	m_blockPerPage(0), m_pageList(nullptr), m_freeList(nullptr) {
+
+}
+
 My::Allocator::Allocator(size_t dataSize, size_t pageSize, size_t alignment)
 	: m_pageList(nullptr)
 	, m_freeList(nullptr) {

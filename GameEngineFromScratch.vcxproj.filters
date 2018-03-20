@@ -66,13 +66,19 @@
     <ClInclude Include="Platform\Windows\d3dx12.h">
       <Filter>头文件\Platform\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="Framework\Common\enginemath.h">
-      <Filter>头文件\Framework\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Platform\Windows\Mesh.h">
       <Filter>头文件\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="Framework\Common\Allocator.hpp">
+      <Filter>头文件\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Common\GraphicsManager.hpp">
+      <Filter>头文件\Framework\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform\Windows\enginemath.h">
+      <Filter>头文件\Platform\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework\Common\MemoryManager.hpp">
       <Filter>头文件\Framework\Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -102,6 +108,12 @@
       <Filter>源文件\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="Framework\Common\Allocator.cpp">
+      <Filter>源文件\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Common\GraphicsManager.cpp">
+      <Filter>源文件\Framework\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework\Common\MemoryManager.cpp">
       <Filter>源文件\Framework\Common</Filter>
     </ClCompile>
   </ItemGroup>

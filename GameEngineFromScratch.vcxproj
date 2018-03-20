@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(ProjectDir)Framework\Interface;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Framework\Interface;$(ProjectDir)Framework\Common;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,19 +121,23 @@
   <ItemGroup>
     <ClInclude Include="Framework\Common\Allocator.hpp" />
     <ClInclude Include="Framework\Common\BaseApplication.hpp" />
-    <ClInclude Include="Framework\Common\enginemath.h" />
+    <ClInclude Include="Framework\Common\GraphicsManager.hpp" />
+    <ClInclude Include="Framework\Common\MemoryManager.hpp" />
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
     <ClInclude Include="Framework\Interface\Interface.hpp" />
     <ClInclude Include="Framework\Interface\IRuntimeModule.hpp" />
     <ClInclude Include="Platform\Windows\cbuffer.h" />
     <ClInclude Include="Platform\Windows\d3dx12.h" />
+    <ClInclude Include="Platform\Windows\enginemath.h" />
     <ClInclude Include="Platform\Windows\Mesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Empty\EmptyApplication.cpp" />
     <ClCompile Include="Framework\Common\Allocator.cpp" />
     <ClCompile Include="Framework\Common\BaseApplication.cpp" />
+    <ClCompile Include="Framework\Common\GraphicsManager.cpp" />
     <ClCompile Include="Framework\Common\main.cpp" />
+    <ClCompile Include="Framework\Common\MemoryManager.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d2d.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d3d.cpp" />
     <ClCompile Include="Platform\Windows\helloengine_d3d12.cpp" />
