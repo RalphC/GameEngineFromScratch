@@ -262,3 +262,6 @@ __pycache__/
 *.exe
 *.pso
 *.vso
+
+# User Specific Ignore
+build/

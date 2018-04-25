@@ -121,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="Framework\Common\Allocator.hpp" />
     <ClInclude Include="Framework\Common\BaseApplication.hpp" />
+    <ClInclude Include="Framework\Common\GfxConfiguration.h" />
     <ClInclude Include="Framework\Common\GraphicsManager.hpp" />
     <ClInclude Include="Framework\Common\MemoryManager.hpp" />
     <ClInclude Include="Framework\Interface\IApplication.hpp" />
