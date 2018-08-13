@@ -7,5 +7,9 @@ namespace My {
 	{
 	public:
 		virtual ~GraphicsManager() {}
+
+		virtual int Initialize();
+		virtual void Finalize();
+		virtual void Tick();
 	};
 }

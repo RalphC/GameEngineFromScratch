@@ -12,9 +12,20 @@ set (CMAKE_CXX_FLAGS_DEBUG          "/Debug")
 set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
 set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 /Debug")
+
+# -----------------------------------------------------------------------
+
 project (GameEngineFromScratch)
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
+include_directories("${PROJECT_SOURCE_DIR}/RHI")
+
+IF(${UNIX})
+    include_directories("${PROJECT_SOURCE_DIR}/Platform/Linux")
+ELSEIF(${WIN32})
+    include_directories("${PROJECT_SOURCE_DIR}/Platform/Windows")
+ENDIF(${UNIX})
+
 add_subdirectory(Framework)
-add_subdirectory(Empty)
 add_subdirectory(Platform)
+add_subdirectory(RHI)

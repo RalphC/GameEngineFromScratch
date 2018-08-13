@@ -3,12 +3,6 @@
 
 using namespace My;
 
-namespace My {
-	GfxConfiguration config(8, 8, 8, 8, 32, 0, 0, 960, 540, L"Game Engine(Windows)");
-	WindowsApplication	g_App(config);
-	IApplication*		g_pApp = &g_App;
-}
-
 int My::WindowsApplication::Initialize() {
 	int result;
 
@@ -34,15 +28,15 @@ int My::WindowsApplication::Initialize() {
 
 	RegisterClassEx(&wc);
 
-	hWnd = CreateWindowExW(
+	hWnd = CreateWindowEx(
 		0,
-		L"GameEngine",
-		m_config.appName,
+		_T("GameEngine"),
+		m_Config.appName,
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT,
 		CW_USEDEFAULT,
-		m_config.screenWidth,
-		m_config.screenHeight,
+		m_Config.screenWidth,
+		m_Config.screenHeight,
 		NULL,
 		NULL,
 		hInstance,
@@ -50,6 +44,8 @@ int My::WindowsApplication::Initialize() {
 	);
 
 	ShowWindow(hWnd, SW_SHOW);
+
+	m_hWnd = hWnd;
 
 	return result;
 }

@@ -25,6 +25,8 @@ namespace My {
 
 	static const uint32_t kMaxBlockSize = kBlockSize[kNumBlockSize - 1];
 
+	size_t*        MemoryManager::m_pBlockSizeLookup;
+	Allocator*     MemoryManager::m_pAllocators;
 }
 
 int My::MemoryManager::Initialize() {
